@@ -11,6 +11,19 @@ exports.entries_search = function entries_search(client, res) {
         });
 }
 
+exports.entries_list = (client, contentTypeId) => {
+    return client.entries.list(contentTypeId)
+        .then(result => {
+            console.log('API call result: ', result);
+            return result;
+        })
+        .catch(error => {
+            console.log('API call fetch error: ', error);
+            throw error;
+        });
+};
+
+
 //   const entryId = uuidv4();
   //   let newEntry = {
   //     "title": "Entry 4",
@@ -50,9 +63,7 @@ exports.entries_search = function entries_search(client, res) {
   //   language: 'en-GB'
   // })
 
-  // client.entries.list('contensis10010CT')
-
-  // client.entries.list({
+   // client.entries.list({
   //   contentTypeId: 'movie',
   //   language: 'en-GB',
   //   versionStatus: "published",

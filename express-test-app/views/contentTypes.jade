@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h3=title
+    p
+    ul
+      for contentType in contentTypes
+        li= contentType.name['en-GB']
+      else
+        li There are no content types available

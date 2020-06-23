@@ -4,22 +4,19 @@ const Query = require('contensis-management-api').Query;
 const Op = require('contensis-management-api').Op;
 const uuidv4 = require('uuid/v4');
 
-const projects_list = require('../examples/projects').projects_list;
+const contentTypes_list = require('../examples/contentTypes').contentTypes_list;
 
-/* GET home page. */
 router.get('/', async function (req, res, next) {
 
   try {
-
     let client = res.app.get('tokenClient');
 
-    let projects = await projects_list(client);
+    let contentTypes = await contentTypes_list(client);
 
-
-    res.render('index', { title: 'Current projects:', projects: projects });
+    res.render('contentTypes', { title: 'Project content types:', contentTypes: contentTypes });
 
   } catch (error) {
-    res.render('index', { title: 'Error' });
+    res.render('contentTypes', { title: 'Error' });
   }
 
 });

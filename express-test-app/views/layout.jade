@@ -4,4 +4,15 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    h1= 'express examples for Contensis management api'
+    nav
+      h3= 'Navigation: '
+      p
+       div
+          a(href="/") Home 
+        div
+          a(href="/entries") Entries 
+        div
+          a(href="/contenttypes") Content types 
+    main
+      block content

@@ -1,7 +1,17 @@
-// client.contentTypes.list({
-  //   dataFormat: 'entry',
-  //   versionStatus: 'latest'
-  // })
+exports.contentTypes_list = (client) => {
+  return client.contentTypes.list({
+    dataFormat: 'entry',
+    versionStatus: 'latest'
+  })
+    .then(result => {
+      console.log('API call result: ', result);
+      return result;
+    })
+    .catch(error => {
+      console.log('API call fetch error: ', error);
+      throw error;
+    });
+};
 
   // client.contentTypes.get('simple')
   // .then(result => {
@@ -18,7 +28,7 @@
   //   }
   // })
 
-  
+
   // client.contentTypes.get('simple')
   // .then(result => {
   //   if (result) {
