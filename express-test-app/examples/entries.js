@@ -23,6 +23,37 @@ exports.entries_list = (client, contentTypeId) => {
         });
 };
 
+exports.create_asset = (client) => {
+    return client.entries.createAsset({
+        "title": "Test 23-June",
+        "sys": {
+            //"id": entryId,
+            "projectId": "website",
+            "language": "en-GB",
+            "dataFormat": "asset",
+        }
+    },
+        'C:/Temp/test.jpg',
+        '/contensis-management-api/assets')
+        .then(result => {
+            console.log('API call result: ', result);
+            return result;
+        })
+        .catch(error => {
+            console.log('API call fetch error: ', error);
+            throw error;
+        });
+};
+
+exports.update_asset = (client, entryId) => {
+    return client.entries.get(entryId).then(asset => {
+        return client.entries.updateAsset(asset, 'C:/Temp/test_1.jpg')
+            .catch(error => {
+                console.log('API call fetch error: ', error);
+                throw error;
+            });
+    });
+};
 
 //   const entryId = uuidv4();
   //   let newEntry = {
@@ -38,18 +69,6 @@ exports.entries_list = (client, contentTypeId) => {
   // };
 
   // client.entries.create(newEntry)
-
-  // client.entries.createAsset({
-  //   "title": "Batman Begins",
-  //   "sys": {
-  //     //"id": entryId,
-  //     "projectId": "website",
-  //     "language": "en-GB",
-  //     "dataFormat": "asset",
-  //   }
-  // },
-  //   'C:/Temp/test1.jpg',
-  //   '/contensis-management-api/assets')
 
   // client.entries.get('5bca5bec-a401-4c80-a02a-c3ed2cf8f150').then(asset => {
   //   client.entries.updateAsset(asset, 'C:/Temp/test2.jpg')
@@ -80,8 +99,3 @@ exports.entries_list = (client, contentTypeId) => {
   //   event: 'sysUnpublish',
   //   language: 'en-GB'
   // }).then(updateResult => {
-
-  //client.entries.createAsset({ "title": "Batman Begins" }, 'C:/Temp/test1.jpg', '/contensis-management-api/assets')
-
-  // client.entries.get('5bca5bec-a401-4c80-a02a-c3ed2cf8f150').then(asset => {
-  //   client.entries.updateAsset(asset, 'C:/Temp/test2.jpg')

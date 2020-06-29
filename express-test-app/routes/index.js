@@ -11,10 +11,9 @@ router.get('/', async function (req, res, next) {
 
   try {
 
-    let client = res.app.get('tokenClient');
+    let client = res.app.get('client');
 
     let projects = await projects_list(client);
-
 
     res.render('index', { title: 'Current projects:', projects: projects });
 

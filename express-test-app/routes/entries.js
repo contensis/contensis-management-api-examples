@@ -9,7 +9,7 @@ const entries_list = require('../examples/entries').entries_list;
 router.get('/', async function (req, res, next) {
 
   try {
-    let client = res.app.get('passwordClient');
+    let client = res.app.get('client');
 
     let result = await entries_list(client, 'simpleContent');
     let entries = result.items;

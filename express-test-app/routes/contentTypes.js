@@ -9,7 +9,7 @@ const contentTypes_list = require('../examples/contentTypes').contentTypes_list;
 router.get('/', async function (req, res, next) {
 
   try {
-    let client = res.app.get('tokenClient');
+    let client = res.app.get('client');
 
     let contentTypes = await contentTypes_list(client);
 
