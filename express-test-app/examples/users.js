@@ -50,7 +50,7 @@ exports.users_getByUsername = (client, res) => {
 };
 
 exports.users_getByEmail = (client, res) => {
-    return client.security.users.getByEmail('test@zengenti.com')
+    return client.security.users.getByEmail('test.user@zengenti.com')
         .then(result => {
             console.log('API call result: ', result);
             if (res) {

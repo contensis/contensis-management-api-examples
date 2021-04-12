@@ -13,6 +13,22 @@ exports.contentTypes_list = (client) => {
     });
 };
 
+exports.contentTypes_create = async (client) => {
+  let newContentType = {
+    "id": "contentType1"
+  };
+
+  return client.contentTypes.create(newContentType)
+    .then(result => {
+      console.log('API call result: ', result);
+      return result;
+    })
+    .catch(error => {
+      console.log('API call error: ', error);
+      throw error;
+    });
+};
+
   // client.contentTypes.get('simple')
   // .then(result => {
   //   if (result) {
