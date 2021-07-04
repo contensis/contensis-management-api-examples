@@ -139,18 +139,41 @@ class App extends Component {
     this.state = {
       managementApiClient: new Client(Client.defaultClientConfig),
       projects: [],
+      currentEntry: null,
       currentUser: null,
       redirect: false
     };
 
     this.handleLogin = this.handleLogin.bind(this);
     this.clearIdentityCookies = this.clearIdentityCookies.bind(this);
+    this.getEntry = this.getEntry.bind(this);
   }
 
   componentDidMount() {
     if (this.state.projects.length === 0) {
       this.refreshData();
     }
+  }
+
+  getEntry(entryId) {
+    ensureContensisManagementApiClient(this.state.managementApiClient)
+      .then(client => {
+        this.setState({ managementApiClient: client });
+        if (!client) {
+          this.setState({
+            currentUser: null,
+            projects: [],
+            currentEntry: null
+          });
+        } else {
+          client.security.users.getCurrent()
+              .then(currentUser => this.setState({ currentUser }));
+          client.projects.list()
+              .then(projects => this.setState({ projects }));
+          client.entries.get(entryId)
+              .then(x => this.setState({currentEntry: x}));
+        }
+      });
   }
 
   handleLogin(cmsUrl, username, password) {
@@ -177,7 +200,8 @@ class App extends Component {
         if (!client) {
           this.setState({
             currentUser: null,
-            projects: []
+            projects: [],
+            currentEntry: null
           });
         } else {
           client.security.users.getCurrent()
@@ -205,6 +229,9 @@ class App extends Component {
                 <Link to="/">Home</Link>
               </li>
               <li>
+                <Link to="/projects">Projects</Link>
+              </li>
+              <li>
                 <Link to="/entries">Entries</Link>
               </li>
               <li>
@@ -228,8 +255,11 @@ class App extends Component {
               <Route exact path="/">
                 {!this.state.managementApiClient ? <Redirect to="/login" /> : <Home projects={this.state.projects} />}
               </Route>
+              <Route exact path="/projects">
+                {!this.state.managementApiClient ? <Redirect to="/login" /> : <Projects projects={this.state.projects} />}
+              </Route>
               <Route exact path="/entries">
-                {!this.state.managementApiClient ? <Redirect to="/login" /> : <Entries projects={this.state.projects} />}
+                {!this.state.managementApiClient ? <Redirect to="/login" /> : <Entries currentEntry={this.state.currentEntry} onGetEntry={this.getEntry}/>}
               </Route>
               <Route path="/currentIdentity">
                 <CurrentIdentity currentUser={this.state.currentUser} onClearIdentityCookies={this.clearIdentityCookies}/>
@@ -254,6 +284,81 @@ const Home = (props) => {
   );
 }
 
+class Projects extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      projectNames : props.projects.map(x => x.id)
+    };
+  }
+
+  render() {
+    return (
+        <div>
+          <h2>Projects</h2>
+          <p>Projects count: {this.props.projects?.length}</p>
+          <p>
+            <ul>
+              {this.state.projectNames.map(x => (<li key={x}>{x}</li>))}
+            </ul>
+          </p>
+          <p>
+          <pre>
+            { JSON.stringify(this.props.projects, null, 2) }
+          </pre>
+          </p>
+        </div>
+    );
+  }
+}
+
+class Entries extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      entryId: null,
+      currentEntry: null
+    };
+    if(props.currentEntry) {
+      console.log("HAS CURRENT ENTRY: " + JSON.stringify(props.currentEntry, null, 2));
+    }
+    this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleChange(evt) {
+    console.log("Entry id in form = " + evt.target.value);
+    this.setState({ [evt.target.name]: evt.target.value });
+  }
+
+  handleClick(evt) {
+    console.log("Entry id = " + this.state.entryId);
+    this.props.onGetEntry(this.state.entryId);
+  }
+
+  render() {
+    return (
+        <div>
+          <h2>Entries</h2>
+          <form>
+            <div>
+              <label>Entry ID : </label>
+              <input type="text" name="entryId" onChange={this.handleChange} />
+            </div>
+            <div>
+              <input type="button" value="Get entry" onClick={this.handleClick} />
+            </div>
+          </form>
+          <pre>
+            { JSON.stringify(this.props.currentEntry, null, 2) }
+          </pre>
+        </div>
+    );
+  }
+}
+
 class CurrentIdentity extends Component {
 
   constructor(props) {
@@ -273,35 +378,6 @@ class CurrentIdentity extends Component {
             <input type="button" value="Clear current identity" onClick={this.props.onClearIdentityCookies} />
           </p>
         </div>
-    );
-  }
-}
-
-class Entries extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      projectNames : props.projects.map(x => x.id)
-    };
-  }
-
-  render() {
-    return (
-      <div>
-        <h2>Entries</h2>
-        <p>Projects count: {this.props.projects?.length}</p>
-        <p>
-          <ul>
-            {this.state.projectNames.map(x => (<li key={x}>{x}</li>))}
-          </ul>
-        </p>
-        <p>
-          <pre>
-            { JSON.stringify(this.props.projects, null, 2) }
-          </pre>
-        </p>
-      </div>
     );
   }
 }
