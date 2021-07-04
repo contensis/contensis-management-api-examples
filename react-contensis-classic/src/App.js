@@ -190,7 +190,7 @@ class App extends Component {
                 <Link to="/entries">Entries</Link>
               </li>
               <li>
-                <Link to="/about">About</Link>
+                <Link to="/currentIdentity">Current Identity</Link>
               </li>
               <li>
                 <Link to="/login">Login</Link>
@@ -213,11 +213,11 @@ class App extends Component {
               <Route exact path="/entries">
                 {!this.state.managementApiClient ? <Redirect to="/login" /> : <Entries projects={this.state.projects} />}
               </Route>
-              <Route path="/about">
-                <About currentUser={this.state.currentUser} />
+              <Route path="/currentIdentity">
+                <CurrentIdentity currentUser={this.state.currentUser} />
               </Route>
               <Route path="/login">
-                {!!this.state.managementApiClient ? <Redirect to="/about" /> : <Login onLogin={this.handleLogin} />}
+                {!!this.state.managementApiClient ? <Redirect to="/currentIdentity" /> : <Login onLogin={this.handleLogin} />}
               </Route>
             </Switch>
           </div>
@@ -236,19 +236,21 @@ const Home = (props) => {
   );
 }
 
-const About = (props) => {
-  return (
-    <div>
-      <h2>About</h2>
-      <p>Current user: {props.currentUser?.userName}</p>
-      <p>
-        { JSON.stringify(props.currentUser, null, 2) }
-      </p>
-      <p>
-        <input type="button" value="Login" onClick={this.handleClick} />
-      </p>
-    </div>
-  );
+class CurrentIdentity extends Component {
+  render() {
+    return (
+        <div>
+          <h2>Current Identity</h2>
+          <p>Current user: {this.props.currentUser?.userName}</p>
+          <p>
+            { JSON.stringify(this.props.currentUser, null, 2) }
+          </p>
+          <p>
+            <input type="button" value="Clear current identity" onClick={this.handleClick} />
+          </p>
+        </div>
+    );
+  }
 }
 
 class Entries extends Component {
