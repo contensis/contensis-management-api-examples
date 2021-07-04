@@ -78,7 +78,7 @@ async function ensureContensisManagementApiClient(managementApiClient) {
   return null;
 }
 
-async function createContensisManagementApiClient(username, password) {
+async function createContensisManagementApiClient(cmsUrl, username, password) {
   const cookies = new Cookies();
   // if we don't have a refresh token or there was an error creating a client with the current refresh token 
   // we need to redirect to a login page and create a temporary client based on user name and password
@@ -90,7 +90,7 @@ async function createContensisManagementApiClient(username, password) {
       password
     },
     projectId: ContensisProjectId,
-    rootUrl: ContensisInstanceUrl
+    rootUrl: cmsUrl
   });
   console.log('created client from user name and password');
 
@@ -139,7 +139,8 @@ class App extends Component {
     this.state = {
       managementApiClient: new Client(Client.defaultClientConfig),
       projects: [],
-      currentUser: null
+      currentUser: null,
+      redirect: false
     };
 
     this.handleLogin = this.handleLogin.bind(this);
@@ -152,10 +153,12 @@ class App extends Component {
     }
   }
 
-  handleLogin(username, password) {
-    createContensisManagementApiClient(username, password)
+  handleLogin(cmsUrl, username, password) {
+    createContensisManagementApiClient(cmsUrl, username, password)
       .then(client => {
-        this.setState({ managementApiClient: client });
+        this.setState({
+          managementApiClient: client
+        });
         this.refreshData();
       });
   }
@@ -163,9 +166,8 @@ class App extends Component {
   clearIdentityCookies() {
     const cookies = new Cookies();
     cookies.remove(ContensisRefreshTokenCookieName);
-    if(this.state.managementApiClient) {
-      this.state.managementApiClient.setState(null);
-    }
+    this.setState({ managementApiClient: null });
+    this.setState({ redirect: true });
   }
 
   refreshData() {
@@ -186,10 +188,17 @@ class App extends Component {
       });
   }
 
+  renderRedirect = () => {
+    if(this.state.redirect) {
+      return <Redirect to='/login' />
+    }
+  }
+
   render() {
     return (
       <div>
         <Router>
+          {this.renderRedirect()}
           <div>
             <ul>
               <li>
@@ -301,7 +310,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cms: '',
+      cmsUrl: '',
       username: '',
       password: ''
     };
@@ -314,7 +323,7 @@ class Login extends Component {
   }
 
   handleClick(evt) {
-    this.props.onLogin(this.state.username, this.state.password);
+    this.props.onLogin(this.state.cmsUrl, this.state.username, this.state.password);
   }
 
   render() {
@@ -324,7 +333,7 @@ class Login extends Component {
         <form>
           <div>
             <label>CMS : </label>
-            <input type="text" name="cms" onChange={this.handleChange} />
+            <input type="text" name="cmsUrl" onChange={this.handleChange} />
           </div>
           <div>
             <label>Username : </label>
