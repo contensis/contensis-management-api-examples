@@ -13,9 +13,11 @@ import { Cookies } from 'react-cookie';
 import { Client } from 'contensis-management-api';
 import { ContensisApplicationError, ContensisAuthenticationError } from 'contensis-core-api';
 
+import axios from "axios";
+
 // ideally the names of any access related cookies should be obfuscated to make their intention less visible
 const ContensisRefreshTokenCookieName = 'ContensisRefreshToken';
-const ContensisInstanceUrl = 'https://cms-example.cloud.contensis.com';
+const ContensisInstanceUrl = 'https://cms-trial-001.cloud.contensis.com';
 const ContensisProjectId = 'website';
 
 async function ensureContensisManagementApiClient(managementApiClient) {
@@ -185,6 +187,9 @@ class App extends Component {
                 <Link to="/">Home</Link>
               </li>
               <li>
+                <Link to="/entries">Entries</Link>
+              </li>
+              <li>
                 <Link to="/about">About</Link>
               </li>
               <li>
@@ -205,11 +210,14 @@ class App extends Component {
               <Route exact path="/">
                 {!this.state.managementApiClient ? <Redirect to="/login" /> : <Home projects={this.state.projects} />}
               </Route>
+              <Route exact path="/entries">
+                {!this.state.managementApiClient ? <Redirect to="/login" /> : <Entries projects={this.state.projects} />}
+              </Route>
               <Route path="/about">
                 <About currentUser={this.state.currentUser} />
               </Route>
               <Route path="/login">
-                {!!this.state.managementApiClient ? <Redirect to="/" /> : <Login onLogin={this.handleLogin} />}
+                {!!this.state.managementApiClient ? <Redirect to="/about" /> : <Login onLogin={this.handleLogin} />}
               </Route>
             </Switch>
           </div>
@@ -233,14 +241,50 @@ const About = (props) => {
     <div>
       <h2>About</h2>
       <p>Current user: {props.currentUser?.userName}</p>
+      <p>
+        { JSON.stringify(props.currentUser, null, 2) }
+      </p>
+      <p>
+        <input type="button" value="Login" onClick={this.handleClick} />
+      </p>
     </div>
   );
+}
+
+class Entries extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      projectNames : props.projects.map(x => x.id)
+    };
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Entries</h2>
+        <p>Projects count: {this.props.projects?.length}</p>
+        <p>
+          <ul>
+            {this.state.projectNames.map(x => (<li key={x}>{x}</li>))}
+          </ul>
+        </p>
+        <p>
+          <pre>
+            { JSON.stringify(this.props.projects, null, 2) }
+          </pre>
+        </p>
+      </div>
+    );
+  }
 }
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      cms: '',
       username: '',
       password: ''
     };
@@ -261,6 +305,10 @@ class Login extends Component {
       <div>
         <h2>Login</h2>
         <form>
+          <div>
+            <label>CMS : </label>
+            <input type="text" name="cms" onChange={this.handleChange} />
+          </div>
           <div>
             <label>Username : </label>
             <input type="text" name="username" onChange={this.handleChange} />
