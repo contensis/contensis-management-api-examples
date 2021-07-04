@@ -9,7 +9,7 @@ import {
 
 import './App.css';
 
-import { Cookies } from 'react-cookie';
+import {Cookies, useCookies} from 'react-cookie';
 import { Client } from 'contensis-management-api';
 import { ContensisApplicationError, ContensisAuthenticationError } from 'contensis-core-api';
 
@@ -143,6 +143,7 @@ class App extends Component {
     };
 
     this.handleLogin = this.handleLogin.bind(this);
+    this.clearIdentityCookies = this.clearIdentityCookies.bind(this);
   }
 
   componentDidMount() {
@@ -157,6 +158,14 @@ class App extends Component {
         this.setState({ managementApiClient: client });
         this.refreshData();
       });
+  }
+
+  clearIdentityCookies() {
+    const cookies = new Cookies();
+    cookies.remove(ContensisRefreshTokenCookieName);
+    if(this.state.managementApiClient) {
+      this.state.managementApiClient.setState(null);
+    }
   }
 
   refreshData() {
@@ -214,7 +223,7 @@ class App extends Component {
                 {!this.state.managementApiClient ? <Redirect to="/login" /> : <Entries projects={this.state.projects} />}
               </Route>
               <Route path="/currentIdentity">
-                <CurrentIdentity currentUser={this.state.currentUser} />
+                <CurrentIdentity currentUser={this.state.currentUser} onClearIdentityCookies={this.clearIdentityCookies}/>
               </Route>
               <Route path="/login">
                 {!!this.state.managementApiClient ? <Redirect to="/currentIdentity" /> : <Login onLogin={this.handleLogin} />}
@@ -237,6 +246,12 @@ const Home = (props) => {
 }
 
 class CurrentIdentity extends Component {
+
+  constructor(props) {
+    super(props);
+    this.render();
+  }
+
   render() {
     return (
         <div>
@@ -246,7 +261,7 @@ class CurrentIdentity extends Component {
             { JSON.stringify(this.props.currentUser, null, 2) }
           </p>
           <p>
-            <input type="button" value="Clear current identity" onClick={this.handleClick} />
+            <input type="button" value="Clear current identity" onClick={this.props.onClearIdentityCookies} />
           </p>
         </div>
     );
