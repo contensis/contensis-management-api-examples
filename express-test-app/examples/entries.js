@@ -1,6 +1,7 @@
 const uuidv4 = require('uuid/v4');
 
 const Query = require('contensis-management-api').Query;
+const ZenqlQuery = require('contensis-management-api').ZenqlQuery;
 const Op = require('contensis-management-api').Op;
 
 exports.entries_create = (client) => {
@@ -76,6 +77,20 @@ exports.entries_search = function entries_search(client) {
             throw error;
         });
 }
+
+exports.entries_search_zenql = client => {
+    var query = new ZenqlQuery('sys.contentTypeId = al and shortText freetext "testing"');
+
+    return client.entries.search(query)
+        .then(result => {
+            console.log('API call result: ', result);
+            return result;
+        })
+        .catch(error => {
+            console.log('API call error: ', error);
+            throw error;
+        });
+};
 
 exports.entries_list = (client, contentTypeId) => {
     return client.entries.list(contentTypeId)

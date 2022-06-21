@@ -198,49 +198,77 @@ exports.groups_removeChildGroup = function groups_removeChildGroup(client, res) 
 }
 
 exports.groups_getUsersByGroupId = function groups_getUsersByGroupId(client, res) {
-    client.security.groups.getUsersByGroupId('{89CEE207-6F12-4D27-8693-B7693766A82D}')
+    return client.security.groups.getUsersByGroupId('{89CEE207-6F12-4D27-8693-B7693766A82D}')
         .then(result => {
             console.log('API call result: ', result);
-            res.render('index', { title: 'Success' });
+            if (res) {
+                res.render('index', { title: 'Success' });
+            }
+
+            return result;
         })
         .catch(error => {
             console.log('API call error: ', error);
-            res.render('index', { title: 'Error' });
+            if (res) {
+                res.render('index', { title: 'Error' });
+            }
         });
 };
 
 exports.groups_geUsersByGroupName = function groups_geUsersByGroupName(client, res) {
-    client.security.groups.getUsersByGroupName('Everyone')
+    return client.security.groups.getUsersByGroupName('tg1', {
+        includeInherited: false,
+    })
         .then(result => {
             console.log('API call result: ', result);
-            res.render('index', { title: 'Success' });
+            if (res) {
+                res.render('index', { title: 'Success' });
+            }
+
+            return result;
         })
         .catch(error => {
             console.log('API call error: ', error);
-            res.render('index', { title: 'Error' });
+            if (res) {
+                res.render('index', { title: 'Error' });
+            }
         });
 }
 
 exports.groups_getChildGroupsByGroupId = function groups_getChildGroupsByGroupId(client, res) {
-    client.security.groups.getChildGroupsByGroupId('{89CEE207-6F12-4D27-8693-B7693766A82D}')
+    return client.security.groups.getChildGroupsByGroupId('{89CEE207-6F12-4D27-8693-B7693766A82D}')
         .then(result => {
             console.log('API call result: ', result);
-            res.render('index', { title: 'Success' });
+            if (res) {
+                res.render('index', { title: 'Success' });
+            }
+
+            return result;
         })
         .catch(error => {
             console.log('API call error: ', error);
-            res.render('index', { title: 'Error' });
+            if (res) {
+                res.render('index', { title: 'Error' });
+            }
         });
 };
 
 exports.groups_getChildGroupsByGroupName = function groups_getChildGroupsByGroupName(client, res) {
-    client.security.groups.getChildGroupsByGroupName('System Administrators')
+    return client.security.groups.getChildGroupsByGroupName('tg1', {
+        includeInherited: true,
+    })
         .then(result => {
             console.log('API call result: ', result);
-            res.render('index', { title: 'Success' });
+            if (res) {
+                res.render('index', { title: 'Success' });
+            }
+
+            return result;
         })
         .catch(error => {
             console.log('API call error: ', error);
-            res.render('index', { title: 'Error' });
+            if (res) {
+                res.render('index', { title: 'Error' });
+            }
         });
 }
