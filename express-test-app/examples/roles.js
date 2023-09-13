@@ -1,5 +1,5 @@
 exports.roles_get = (client, res) => {
-    return client.roles.get('c31111e7-76f7-46dd-93fb-cbf81a853a37')
+    return client.roles.get('80baebc8-410e-429b-8bec-c16139c1ce8e')
         .then(result => {
             console.log('API call result: ', result);
             if (res) {
@@ -17,27 +17,25 @@ exports.roles_get = (client, res) => {
 
 exports.roles_create = (client, res) => {
     let role = {
-        "name": {
-            "en-GB": "Movie Editors"
-        },
-        "description": {
-            "en-GB": "Movie editors can edit movies, but not submit or approve them"
-        },
+        "name": "Movie Editors",
+        "description": "Movie editors can edit movies, but not submit or approve them",
         "enabled": true,
         "permissions": {
             "entries": [
                 {
                     "id": "movie",
                     "languages": ["en-GB"],
-                    "actions": ["sys.update", "awaitingApproval.revoke"]
+                    "actions": []
                 }
             ],
-            "contentTypes": []
+            "blocks":
+            {
+                "actions": ["push", "release"]
+            }
+
         },
         "assignments": {
-            "users": ["a.user"],
-            "groups": ["Movie Editors"],
-            "apiKeys": ["Movie Import"]
+            "users": ["a.pop"]
         }
     };
     return client.roles.create(role)
@@ -58,29 +56,23 @@ exports.roles_create = (client, res) => {
 
 exports.roles_update = (client, res) => {
     let role = {
-        "id": "71b48d24-7f65-457d-bd51-cba977b74b74",
-        "name": {
-            "en-GB": "Movie Editors"
-        },
-        "description": {
-            "en-GB": "Movie editors can edit movies, but not submit or approve them"
-        },
+        "id": "54a06f7c-1cc8-4149-aa51-04aabe9f850d",
+        "name": "Movie Editors 1",
+        "description": "Movie editors 1 can edit movies, but not submit or approve them",
         "enabled": true,
         "permissions": {
             "entries": [
                 {
                     "id": "movie",
                     "languages": ["*"],
-                    "actions": ["draft.*", "awaitingApproval.revoke"]
+                    "actions": []
                 }
             ],
-            "contentTypes": []
+            "blocks":
+            {
+                "actions": ["push", "release"]
+            }
         },
-        "assignments": {
-            "users": ["a.user"],
-            "groups": ["Movie Editors"],
-            "apiKeys": ["Movie Import"]
-        }
     };
     return client.roles.update(role)
         .then(result => {
